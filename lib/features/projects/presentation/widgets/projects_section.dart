@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/responsive/responsive.dart';
 
 class ProjectsSection extends StatelessWidget {
   const ProjectsSection({super.key});
@@ -6,28 +7,28 @@ class ProjectsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final width = MediaQuery.of(context).size.width;
+    final crossAxisCount = width < Breakpoints.mobile
+        ? 1
+        : (width < Breakpoints.tablet ? 2 : 3);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Projects', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
-        LayoutBuilder(builder: (context, constraints) {
-          final isWide = constraints.maxWidth > 900;
-          final crossAxisCount = isWide ? 3 : 1;
-          return GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: crossAxisCount,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 1.5,
-            children: const [
-              _ProjectCard(title: 'Portfolio Web', tech: 'Flutter Web • Responsive UI'),
-              _ProjectCard(title: 'E‑Commerce App', tech: 'Flutter • Firebase • Stripe'),
-              _ProjectCard(title: 'Chat App', tech: 'Flutter • WebSockets • Push'),
-            ],
-          );
-        }),
+        GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: crossAxisCount,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 1.5,
+          children: const [
+            _ProjectCard(title: 'Portfolio Web', tech: 'Flutter Web • Responsive UI'),
+            _ProjectCard(title: 'E‑Commerce App', tech: 'Flutter • Firebase • Stripe'),
+            _ProjectCard(title: 'Chat App', tech: 'Flutter • WebSockets • Push'),
+          ],
+        ),
       ],
     );
   }

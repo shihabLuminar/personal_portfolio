@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/widgets/nav_bar.dart';
+import '../../../../core/responsive/responsive.dart';
 import '../../../profile/presentation/widgets/profile_section.dart';
 import '../../../about/presentation/widgets/about_section.dart';
 import '../../../services/presentation/widgets/services_section.dart';
@@ -7,7 +8,14 @@ import '../../../projects/presentation/widgets/projects_section.dart';
 import '../../../contact/presentation/widgets/contact_section.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({
+    super.key,
+    required this.isDarkMode,
+    required this.onToggleThemeMode,
+  });
+
+  final bool isDarkMode;
+  final VoidCallback onToggleThemeMode;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -44,7 +52,17 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: NavBar(onSectionTap: _scrollTo),
+      appBar: NavBar(
+        onSectionTap: _scrollTo,
+        isDarkMode: widget.isDarkMode,
+        onToggleThemeMode: widget.onToggleThemeMode,
+      ),
+      drawer: _MobileDrawer(
+        onSelect: (section) {
+          Navigator.of(context).pop();
+          _scrollTo(section);
+        },
+      ),
       body: Scrollbar(
         controller: _scrollController,
         child: SingleChildScrollView(
@@ -88,11 +106,18 @@ class _SectionContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final horizontal = width < Breakpoints.mobile
+        ? 16.0
+        : (width < Breakpoints.tablet ? 20.0 : 24.0);
+    final vertical = width < Breakpoints.mobile
+        ? 32.0
+        : (width < Breakpoints.tablet ? 40.0 : 48.0);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+      padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical),
       alignment: Alignment.center,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1100),
+        constraints: const BoxConstraints(maxWidth: 1200),
         child: child,
       ),
     );
@@ -111,6 +136,52 @@ class _Footer extends StatelessWidget {
         style: Theme.of(
           context,
         ).textTheme.bodySmall?.copyWith(color: Colors.grey[700]),
+      ),
+    );
+  }
+}
+
+class _MobileDrawer extends StatelessWidget {
+  const _MobileDrawer({required this.onSelect});
+  final void Function(PortfolioSection section) onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          children: [
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
+              onTap: () => onSelect(PortfolioSection.profile),
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('About'),
+              onTap: () => onSelect(PortfolioSection.about),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home_repair_service),
+              title: const Text('Services'),
+              onTap: () => onSelect(PortfolioSection.services),
+            ),
+            ListTile(
+              leading: const Icon(Icons.apps),
+              title: const Text('Projects'),
+              onTap: () => onSelect(PortfolioSection.projects),
+            ),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: FilledButton(
+                onPressed: () => onSelect(PortfolioSection.contact),
+                child: const Text('Contact'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
