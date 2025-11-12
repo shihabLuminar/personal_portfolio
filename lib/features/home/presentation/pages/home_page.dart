@@ -35,12 +35,16 @@ class _HomePageState extends State<HomePage> {
   Future<void> _scrollTo(PortfolioSection section) async {
     final key = _sectionKeys[section];
     if (key?.currentContext == null) return;
-    await Scrollable.ensureVisible(
-      key!.currentContext!,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-      alignment: 0.05,
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = key?.currentContext;
+      if (ctx == null) return;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+        alignment: 0.05,
+      );
+    });
   }
 
   @override
