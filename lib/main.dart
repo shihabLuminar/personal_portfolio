@@ -1,8 +1,0 @@
-import 'package:flutter/material.dart';
-import 'app/app.dart';
-
-void main() {
-  runApp(const App());
-}
-
-// App is bootstrapped in app/app.dart
