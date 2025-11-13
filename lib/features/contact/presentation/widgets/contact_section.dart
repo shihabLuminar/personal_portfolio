@@ -27,11 +27,24 @@ class _ContactSectionState extends State<ContactSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Contact', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 16),
+        Text(
+          'Get In Touch',
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Have a project in mind? Let\'s work together!',
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.brightness == Brightness.dark ? Colors.grey[400] : Colors.grey[600],
+          ),
+        ),
+        const SizedBox(height: 24),
         Card(
+          elevation: 4,
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(32),
             child: Form(
               key: _formKey,
               child: LayoutBuilder(
@@ -71,19 +84,29 @@ class _ContactSectionState extends State<ContactSection> {
                         decoration: const InputDecoration(labelText: 'Message'),
                         validator: (v) => (v == null || v.trim().length < 10) ? 'Please enter at least 10 characters' : null,
                       ),
-                      const SizedBox(height: 16),
-                      Align(
-                        alignment: Alignment.centerRight,
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
                         child: FilledButton.icon(
                           onPressed: () {
                             if (_formKey.currentState?.validate() ?? false) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Thanks! Your message has been prepared.')),
+                                SnackBar(
+                                  content: const Text('Thanks! Your message has been sent.'),
+                                  backgroundColor: theme.colorScheme.primary,
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
                               );
                             }
                           },
-                          icon: const Icon(Icons.send),
-                          label: const Text('Send'),
+                          icon: const Icon(Icons.send, size: 20),
+                          label: const Text('Send Message'),
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
                         ),
                       )
                     ],

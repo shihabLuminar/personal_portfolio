@@ -55,7 +55,7 @@ class ServicesSection extends StatelessWidget {
   }
 }
 
-class _ServiceCard extends StatelessWidget {
+class _ServiceCard extends StatefulWidget {
   const _ServiceCard({
     required this.icon,
     required this.title,
@@ -66,30 +66,76 @@ class _ServiceCard extends StatelessWidget {
   final String desc;
 
   @override
+  State<_ServiceCard> createState() => _ServiceCardState();
+}
+
+class _ServiceCardState extends State<_ServiceCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: theme.colorScheme.primary, size: 32),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
+    final isDark = theme.brightness == Brightness.dark;
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+        transform: Matrix4.identity()..translate(0.0, _isHovered ? -8.0 : 0.0),
+        child: Card(
+          elevation: _isHovered ? 8 : 2,
+          shadowColor: theme.colorScheme.primary.withOpacity(_isHovered ? 0.2 : 0.05),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: _isHovered
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        theme.colorScheme.primary.withOpacity(0.05),
+                        theme.colorScheme.secondary.withOpacity(0.05),
+                      ],
+                    )
+                  : null,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      widget.icon,
+                      color: theme.colorScheme.primary,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    widget.title,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    widget.desc,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: isDark ? Colors.grey[300] : Colors.grey[700],
+                      height: 1.6,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              desc,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[800],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

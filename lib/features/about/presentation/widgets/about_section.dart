@@ -34,16 +34,56 @@ class AboutSection extends StatelessWidget {
   }
 }
 
-class _Chip extends StatelessWidget {
+class _Chip extends StatefulWidget {
   const _Chip({required this.label});
   final String label;
 
   @override
+  State<_Chip> createState() => _ChipState();
+}
+
+class _ChipState extends State<_Chip> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Chip(
-      label: Text(label),
-      side: BorderSide(color: Colors.grey.withOpacity(0.3)),
-      backgroundColor: Colors.white,
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: _isHovered
+              ? theme.colorScheme.primary.withOpacity(0.1)
+              : (isDark ? const Color(0xFF1E293B) : Colors.white),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: _isHovered
+                ? theme.colorScheme.primary
+                : Colors.grey.withOpacity(0.3),
+            width: _isHovered ? 1.5 : 1,
+          ),
+          boxShadow: _isHovered
+              ? [
+                  BoxShadow(
+                    color: theme.colorScheme.primary.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          widget.label,
+          style: TextStyle(
+            fontWeight: _isHovered ? FontWeight.w600 : FontWeight.w500,
+            color: _isHovered ? theme.colorScheme.primary : null,
+          ),
+        ),
+      ),
     );
   }
 }

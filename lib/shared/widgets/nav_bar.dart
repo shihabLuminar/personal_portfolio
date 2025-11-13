@@ -29,10 +29,17 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
       height: preferredSize.height,
       padding: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
-        color: theme.appBarTheme.backgroundColor ?? Colors.white,
+        color: (theme.appBarTheme.backgroundColor ?? Colors.white).withOpacity(0.95),
         border: Border(
-          bottom: BorderSide(color: Colors.grey.withOpacity(0.15)),
+          bottom: BorderSide(color: Colors.grey.withOpacity(0.1)),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -94,13 +101,44 @@ class NavBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class _NavButton extends StatelessWidget {
+class _NavButton extends StatefulWidget {
   const _NavButton({required this.label, required this.onTap});
   final String label;
   final VoidCallback onTap;
 
   @override
+  State<_NavButton> createState() => _NavButtonState();
+}
+
+class _NavButtonState extends State<_NavButton> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return TextButton(onPressed: onTap, child: Text(label));
+    final theme = Theme.of(context);
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: _isHovered ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
+        ),
+        child: TextButton(
+          onPressed: widget.onTap,
+          style: TextButton.styleFrom(
+            foregroundColor: _isHovered ? theme.colorScheme.primary : null,
+          ),
+          child: Text(
+            widget.label,
+            style: TextStyle(
+              fontWeight: _isHovered ? FontWeight.w600 : FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
